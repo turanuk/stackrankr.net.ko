@@ -1,0 +1,77 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  if (!IsPost) {
+    Response.SetStatus(401);
+  } else {
+    var personId = Request["PersonId"].AsInt();
+    var rankingId = Request["RankingId"].AsInt();
+    var index = Request["Index"].AsInt();
+    var db = Database.Open("stackRankR");
+
+    //Pull the ranking
+    var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", rankingId);
+    var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
+
+    //Check for ownership or shared rights
+    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
+      var person = db.QuerySingle("SELECT * FROM Person WHERE ID=@0", personId);
+      var oldIndex = person.OrderIndex;
+      var sortDir = "ASC";
+      if (index - oldIndex > 0) {
+        //Moving down, so we need to modify IDs that occur before. Otherwise, we are moving up, so we need to shift IDs that occur afterwards
+        sortDir = "DESC";
+      }
+
+      //It's also possible that this is an insertion from another ranking. In that case, we are always shifting down, so shift IDs that occur afterwards.
+      if (person.RankingId != rankingId) {
+        sortDir = "ASC";
+      }
+
+      //Temporarily set the index to -1 so the new entry can be ordered correctly
+      db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", -1, personId);
+      //Now need to update the order within the rankings to preserve the correct order on re-rendering
+      var people = db.Query("SELECT * FROM Person WHERE RankingId=@0 ORDER BY OrderIndex " + sortDir, rankingId);
+
+      //Lay out all the ranking Ids
+      var pastIndex = false;
+      var counter = 0;
+      foreach (var p in people) {
+        var currentOrderIndex = p.OrderIndex;
+        //If you match the index, you need to start shifting up from beyond this point.
+        if (currentOrderIndex == index) {
+          pastIndex = true;
+        }
+        //Shift up the Id if past the index of insertion
+        if (pastIndex) {
+          var newIndex = 0;
+          if (sortDir == "ASC") {
+            newIndex = currentOrderIndex + 1;
+          } else {
+            newIndex = currentOrderIndex - 1;
+          }
+          db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", newIndex, p.Id);
+        }
+        counter++;
+      }
+      //This needs to be inserted at the end, update index appropriately
+      if (!pastIndex) {
+        db.Execute("UPDATE Person SET RankingId=@0, OrderIndex=@1 WHERE Id=@2", rankingId, counter, personId);
+      } else {
+        //Restore index input
+        db.Execute("UPDATE Person SET RankingId=@0, OrderIndex=@1 WHERE Id=@2", rankingId, index, personId);
+      }
+
+      //Finally, normalize the ranking that you removed from
+      var originalPeople = db.Query("SELECT * FROM Person WHERE RankingId=@0 ORDER BY OrderIndex ASC", person.RankingId);
+      var count = 0; 
+      foreach (var op in originalPeople) {
+        db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", count, op.Id);
+        count++;
+      }
+      Response.SetStatus(200);
+    } else {
+      Response.SetStatus(401);
+    }
+  }
+}

@@ -1,0 +1,299 @@
+a {
+  text-decoration: none;
+}
+
+.newTeam {
+  display: block;
+  margin-left: 10px;
+}
+
+.linkButton {
+  background-color: #d8eb9f;
+  border: 3px solid black;
+  font-family: 'Open Sans';
+  font-size: 1.0em;
+  font-weight: bold;
+  padding: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.deleteButton {
+  font-size: 0.95em;
+}
+
+.actionHeader {
+  height: 25px;
+}
+
+#newRankingButton {
+  margin-left: 20px;
+}
+
+.linkButton:hover, .linkButton:focus {
+  background-color: #deeabd;
+  -moz-outline: none;
+  outline: none;
+  text-decoration: none;
+}
+
+#dialog {
+  display: none;
+}
+
+.dialogInput {
+  width: 250px;
+  overflow: auto;
+}
+
+.error {
+  color: Red;
+  display: none;
+  margin-left: 7px;
+}
+
+.contentContainer {
+  margin-left: 7px;
+}
+
+.leftContent {
+  float: left;
+  width: 50%;
+}
+
+.rightContent {
+  float: left;
+}
+
+#newTeamButton {
+  font-family: Verdana, Helvetica, sans-serif;
+}
+
+.teamList {
+  font-family: 'Open Sans';
+  font-size: 1.3em;
+  font-weight: bold;
+  list-style: none;
+  margin: 13px 0 0 0;
+  margin-bottom: 20px;
+  padding: 0;
+  width: 30%;
+}
+
+  .teamList li {
+    margin: 0;
+    padding: 3px 0 3px 0;
+  }
+
+    .teamList li a {
+      display: block;
+      padding: 5px;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .teamList li a:hover, .teamList li a:focus {
+      -moz-outline: none;
+      outline: none;
+      text-decoration: none;
+    }
+
+.medSpacer {
+  height: 7px;
+}
+
+.largeSpacer {
+  height: 20px;
+}
+
+.teamName {
+  text-align: left;
+}
+
+.teamList li a:hover .modifyButton {
+  background: url(../Images/process.png) no-repeat;
+  height: 24px;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 24px;
+}
+
+.teamList li a:hover .shareButton {
+  background: url(../Images/users.png) no-repeat;
+  height: 24px;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  position: absolute;
+  right: 34px;
+  top: 5px;
+  width: 24px;
+}
+
+.deletedTeam a {
+  background: #e86363;
+  font-size: 0.6em;
+}
+
+  .deletedTeam a:hover {
+    background: #df9595;
+  }
+
+.undo {
+  position: relative;
+}
+
+.undoButton {
+  position: absolute;
+  right: 7px;
+}
+
+/* Team View */
+.topNav {
+  margin-top: 13px;
+}
+
+.topBar {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+  .topBar h1 {
+    margin-left: 20px;
+    margin-top: 7px;
+  }
+
+.users {
+  font-weight: bold;
+  position: absolute;
+  right: 30px;
+  top: 0px;
+}
+
+.avatars {
+  margin-left: 3px;
+}
+
+.avatar {
+  margin-top: 20px;
+}
+
+.rankingContainer {
+  list-style: none;
+  margin: 10px 0 0 20px;
+  overflow: auto;
+  width: 100%;
+}
+
+.ranking {
+  background-color: #a9bc6f;
+  float: left;
+  margin: 10px 30px 150px 0;
+  width: 250px;
+}
+
+  .ranking h3 {
+    margin: 13px 0 0 13px;
+    padding: 0;
+  }
+
+.addPerson {
+  border: 2px solid #a9bc6f;
+  border-top: 2px solid #deeabd;
+  display: block;
+  margin: 30px auto 0 auto;
+  padding: 7px;
+  text-align: right;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+  .addPerson:hover, .addPerson:focus {
+    background-color: #deeabd;
+    border: 2px solid Black;
+    font-weight: bold;
+    -moz-outline: none;
+    outline: none;
+  }
+
+.dialogContainer {
+  display: none;
+}
+
+.peopleContainer {
+  list-style-type: none;
+  min-height: 25px;
+  padding: 0;
+}
+
+.person {
+  background-color: #deeabd;
+  border: 2px solid Grey;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  border-radius: 7px;
+  margin: 0 0 7px 0px;
+  padding: 0;
+  width: 216px;
+}
+
+  .person a {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    display: block;
+    padding: 4px;
+  }
+
+.personDescription {
+  display: block;
+  margin: 4px;
+}
+
+.ui-state-highlight {
+  background-color: #deeabd;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 216px;
+}
+
+.ui-state-default {
+  background-color: white;
+  background-image: none;
+}
+
+ul {
+  list-style: none;
+  margin-left: 12px;
+  padding: 0;
+}
+
+.personInput {
+  width: 300px;
+}
+
+.assigned {
+  border: 2px solid #e2772a;
+}
+
+.assignedPersonParent {
+  margin-top: 7px;
+  font-size: 0;
+}
+
+  .assignedPersonParent img {
+    border: none;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+.assignedPersonDisplay {
+  display: inline-block;
+  margin-left: 3px;
+  margin-bottom: 3px;
+}

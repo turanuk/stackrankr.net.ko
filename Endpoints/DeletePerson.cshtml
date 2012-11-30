@@ -1,0 +1,36 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  if (!IsPost) {
+    Response.SetStatus(401);
+  } else {
+    var personId = Request["PersonId"].AsInt();
+    var db = Database.Open("stackRankR");
+    //Pull the ranking
+    var person = db.QuerySingle("SELECT * FROM Person WHERE Id=@0", personId);
+    var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", person.RankingId);
+    var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
+
+    //Check for ownership or shared rights
+    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
+      var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", person.RankingId);
+      var pastIndex = false;
+      foreach (var p in people) {
+        var currentIndex = p.OrderIndex;
+        //This is the entry we have to remove
+        if (currentIndex == person.OrderIndex) {
+          pastIndex = true;
+        }
+        if (pastIndex) {
+          var newIndex = currentIndex - 1;
+          db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", newIndex, p.Id);
+        }
+      }
+      db.Execute("DELETE FROM PersonAssign WHERE PersonId=@0", personId);
+      db.Execute("DELETE FROM Person WHERE Id=@0", personId);
+      Response.SetStatus(200);
+    } else {
+      Response.SetStatus(401);
+    }
+  }
+}

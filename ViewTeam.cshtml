@@ -1,0 +1,464 @@
+﻿@* Note: This page follows "Very Bad Practices©" for a single-page application for better editor coverage  *@
+
+@{
+  WebSecurity.RequireAuthenticatedUser();
+  Layout = "~/_SiteLayout.cshtml";
+  var teamId = UrlData[0].AsInt();
+  if (teamId == 0) {
+    Response.Redirect("~/Error");
+  }
+  var db = Database.Open("stackRankR");
+  var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", teamId);
+  if (team == null) {
+    Response.Redirect("~/Error");
+  } else {
+    if (team.OwnerId != WebSecurity.CurrentUserId && db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", teamId, WebSecurity.CurrentUserId) == null) {
+      Response.Redirect("~/Error");
+    }
+  }
+
+  var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
+  var sharedUsers = db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId);
+}
+<div class="topNav">
+  <a href="~/Teams">Back to Teams</a>
+</div>
+<div class="topBar">
+  <h1>@team.Name</h1>
+  <input type="hidden" id="teamId" value="@teamId"/>
+  <div class="users">
+    @if (sharedUsers.Count() > 0) {
+      <text>SHARED WITH</text>
+    }
+    <span class="avatars">
+      @foreach (var u in sharedUsers) {
+        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
+        <img src="@Gravatar.GetUrl(user.Email, 25)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
+      }
+    </span>
+  </div>
+</div>
+<div class="actionHeader">
+  <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
+</div>
+
+@section Scripts {
+  <script>
+    $(function () {
+      var makeSortable = function () {
+        $('.peopleContainer').sortable({
+          connectWith: '.peopleContainer',
+          placeholder: 'ui-state-highlight',
+          helper: 'clone',
+          scroll: true,
+          forcePlaceholderSize: true,
+          stop: function (event, ui) {
+            var ranking = $(ui.item).parents('.ranking');
+            var personId = ui.item.attr('id');
+            var rankingId = ranking.attr('data-rankingId');
+            var sortableArray = $(ui.item).parent().sortable('toArray');
+            var index = sortableArray.indexOf(personId);
+            $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
+          }
+        });
+      }
+      $('#newRankingButton').click(function () {
+        var executeRankingInsertion = function (dialogRef) {
+          var rankingText = $('#rankingName').val();
+          if (rankingText === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/addranking', { TeamId: $('#teamId').val(), RankingText: rankingText }, function (data) {
+              $('.rankingContainer').append('<div class="ranking" data-rankingId="' + data + '"><a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="' + data + '">' + rankingText + '</h3></a><ul class="peopleContainer"></ul><a href="javascript: return false;" data-rankingId="' + data + '" class="addPerson">Add a person</a>');
+              makeSortable();
+            });
+            dialogRef.dialog('close');
+          }
+        }
+        $("#newRankingDialog").dialog(
+        {
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons:
+          {
+            "Update": function () {
+              executeRankingInsertion($(this));
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $(this);
+            var rankingName = $('#rankingName');
+            rankingName.select();
+            rankingName.keydown(function (e) {
+              if (e.keyCode == 13) {
+                executeRankingInsertion(thisDialog);
+              }
+            });
+          },
+          close: function () {
+            $('#rankingName').unbind('keydown');
+          }
+        });
+      });
+      $('.shareAvatar').click(function () {
+        var shareAvatar = $(this);
+        var username = shareAvatar.attr('title');
+        var imgSrc = shareAvatar.attr('src');
+        $('#imgHolder').html('<img src="' + imgSrc.substr(0, imgSrc.length - 2) + '75" alt="gravatar" title="' + username + '"/>');
+        $("#unshareDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $(this);
+            $('#unshareButton').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/unshareteam', { Username: username, TeamId: $('#teamId').val() }, function () {
+                  shareAvatar.remove();
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
+          },
+          close: function () {
+            $('#unshareButton').html('Stop');
+            $('#unshareButton').unbind('click');
+          }
+        });
+      });
+      $('.rankingTitle').live('click', function () {
+        var rankingText = $(this).html();
+        var rankingId = $(this).attr('data-rankingId');
+        var rankingTitleElement = $(this);
+        var rankingDom = $(this).parents('.ranking');
+        var executeRankingTitleUpdate = function (dialogRef) {
+          var newRankingText = $('#newRankingName').val();
+          if (newRankingText === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingText }, function () {
+              rankingTitleElement.html(newRankingText);
+            });
+            dialogRef.dialog('close');
+          }
+        }
+        $("#rankingDialog").dialog(
+        {
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons:
+          {
+            "Update": function () {
+              executeRankingTitleUpdate($(this));
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $(this);
+            var newRankingName = $('#newRankingName');
+            newRankingName.val(rankingText);
+            newRankingName.select();
+            newRankingName.keydown(function (e) {
+              if (e.keyCode == 13) {
+                executeRankingTitleUpdate(thisDialog);
+              }
+            });
+            $('#deleteRanking').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/deleteRanking', { RankingId: rankingId }, function () {
+                  rankingDom.fadeOut(100, function () {
+                    $(this).remove();
+                  });
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
+          },
+          close: function () {
+            $('#newRankingName').unbind('keydown');
+            $('#deleteRanking').html('Delete');
+            $('#deleteRanking').unbind('click');
+          }
+        });
+      });
+
+      $('.addPerson').live('click', function () {
+        var rankingId = $(this).attr('data-rankingId');
+        var rankingContainer = $(this).prev('.peopleContainer');
+        var executeAddPerson = function (dialogRef) {
+          var newPersonDesc = $('#newPersonDesc').val();
+          var newPersonDescHtml = $('#newPersonDesc').html();
+          if (newPersonDesc === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
+              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDescHtml + '</span></a></li>')
+            });
+            dialogRef.dialog('close');
+          }
+        }
+        $("#personDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "Insert": function () {
+              executeAddPerson($(this));
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $('#personDialog');
+            var newPersonDesc = $('#newPersonDesc');
+            newPersonDesc.val('');
+            newPersonDesc.focus();
+            //Enter submits
+            /*
+            newPersonDesc.keydown(function (e) {
+            if (e.keyCode == 13) {
+            executeAddPerson(thisDialog);
+            }
+            });
+            */
+          },
+          close: function () {
+            $('#newPersonDesc').unbind('keydown');
+          }
+        });
+      });
+
+      $('.modifyPerson').live('click', function () {
+        var personDescription = $(this).children('span').text();
+        var personDescriptionDom = $(this).children('span');
+        var personDom = $(this).parent('.person');
+        var personId = personDom.attr('id');
+        var rankingId = personDom.attr('data-rankingId');
+        var executePersonUpdate = function (dialogRef) {
+          var editPersonDesc = $('#editedPersonDesc').val();
+          var editPersonHtml = $('#editedPersonDesc').html();
+          if (editPersonDesc === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc }, function () {
+              personDescriptionDom.html(editPersonHtml);
+            });
+            dialogRef.dialog('close');
+          }
+        }
+        $("#editPersonDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          width: 400,
+          buttons: {
+            "Update": function () {
+              executePersonUpdate($(this));
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $('#editPersonDialog');
+            editPersonDesc = $('#editedPersonDesc');
+            editPersonDesc.val(personDescription);
+            editPersonDesc.select();
+            /*
+            editPersonDesc.keydown(function (e) {
+            if (e.keyCode == 13) {
+            executePersonUpdate(thisDialog);
+            }
+            });
+            */
+            $('#assignPerson').click(function () {
+              thisDialog.dialog('close');
+              var avatars = $('.avatars');
+              $("#assignPersonDialog").dialog({
+                modal: true,
+                draggable: false,
+                resizable: false,
+                buttons: {
+                  "Close": function () {
+                    $(this).dialog('close');
+                  }
+                },
+                open: function () {
+                  var thisDialog = $('#assignPersonDialog');
+                  $('#memberContainer').html(avatars.html());
+                  $.getJSON('/endpoints/getassignedmembers', { PersonId: personId }, function (data) {
+                    var assignedHash = {};
+                    //Create hash table of values
+                    $.each(data, function (index, value) {
+                      assignedHash[value] = value;
+                    });
+                    $('#memberContainer').find('img').each(function (index) {
+                      var currentMember = $(this);
+                      var currentMemberId = currentMember.attr('data-userId');
+                      if (assignedHash[parseInt(currentMemberId)]) {
+                        currentMember.addClass('assigned');
+                      }
+                      currentMember.click(function () {
+                        if (currentMember.hasClass('assigned')) {
+                          $.post('/endpoints/unassignmemberfromperson', { PersonId: personId, UserId: currentMemberId }, function () {
+                            currentMember.removeClass('assigned');
+                            personDom.find('.assignedPersonDisplay > img').each(function () {
+                              if ($(this).attr('data-userId') == currentMemberId) {
+                                $(this).parent().remove();
+                              }
+                            });
+                            if (personDom.find('.assignedPersonDisplay > img').length == 0) {
+                              personDom.find('.assignedPersonDisplay').remove();
+                            }
+                          });
+                        } else {
+                          $.post('/endpoints/assignmembertoperson', { PersonId: personId, UserId: currentMemberId }, function () {
+                            currentMember.addClass('assigned');
+                            var assignedParent = personDom.find('.assignedPersonParent');
+                            //If there was never anybody assigned to this card, need to add wrapper element
+                            if (assignedParent.length == 0) {
+                              personDom.find('.modifyPerson').append('<div class="assignedPersonParent"><span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span></div>\n');
+                            } else {
+                              personDom.find('.assignedPersonParent').append('<span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span>\n');
+                            }
+                          });
+                        }
+                      });
+                    });
+                  });
+                },
+                close: function () {
+                  $('#memberContainer').find('.shareAvatar').unbind('click');
+                }
+              });
+            });
+            $('#deletePerson').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/deleteperson', { PersonId: personId }, function () {
+                  personDom.fadeOut(100, function () {
+                    $(this).remove();
+                  });
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
+          },
+          close: function () {
+            $('#deletePerson').html('Delete');
+            $('#deletePerson').unbind('click');
+            $('#assignPerson').unbind('click');
+            $('#editedPersonDesc').unbind('keydown');
+          }
+        });
+      });
+
+      makeSortable();
+    });
+  </script>
+}
+
+@if (rankings.Count() == 0) {
+  <h2>No rankings yet!</h2>
+} else {
+  <div class="rankingContainerWrapper">
+    <div class="rankingContainer">
+      @foreach (var ranking in rankings) {
+        <div class="ranking" data-rankingId="@ranking.Id">
+          <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
+          <ul class="peopleContainer">
+            @{
+              var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
+              foreach (var person in people) {
+              <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
+                <a href="javascript: return false" class="modifyPerson">
+                  <span class="personDescription">@person.Description</span>
+                  @{ 
+                    var assignedPersonQuery = db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", person.Id);
+                    if (assignedPersonQuery.Count > 0) {
+                      <div class="assignedPersonParent">
+                        @foreach (var ap in assignedPersonQuery)
+                        {
+                          var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId = @0", ap.UserId);
+                          <span class="assignedPersonDisplay">
+                            <img src="@Gravatar.GetUrl(user.Email, 25)" alt="gravatar" title="@user.Email" data-userId="@ap.UserId"/>
+                          </span>
+                        }
+                      </div>
+                    }
+                  }
+                </a>
+              </li>
+              }
+            }
+          </ul>
+          <a href="javascript: return false;" data-rankingId="@ranking.Id" class="addPerson">Add a person</a>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<div id="rankingDialog" class="dialogContainer" title="Ranking Name">
+  <p>Enter the new name for this ranking:</p>
+  <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
+  <p>Or click below to delete the ranking:</p>
+  <div class="medSpacer"></div>
+  <a id="deleteRanking" href="javascript:return false;" class="linkButton deleteButton">Delete Ranking</a>
+  <div class="largeSpacer"></div>
+</div>
+
+<div id="newRankingDialog" class="dialogContainer" title="Add a Ranking">
+  <p>Enter the name for this ranking:</p>
+  <input id="rankingName" type="text" class="dialogInput"/><span class="error">*</span>
+</div>
+
+<div id="personDialog" class="dialogContainer" title="Add a Person">
+  <p>Enter the description for this person:</p>
+  <textarea rows="5" id="newPersonDesc" class="dialogInput"></textarea><span class="error">*</span>
+</div>
+
+<div id="editPersonDialog" class="dialogContainer" title="Edit Person">
+  <p>Enter the updated description for this person:</p>
+  <textarea rows="5" id="editedPersonDesc" class="dialogInput personInput"></textarea><span class="error">*</span>
+  <p>Or click below to assign or unassign a team member:</p>
+  <div class="medSpacer"></div>
+  <a id="assignPerson" href="javascript: return false;" class="linkButton">Assign</a>
+  <div class="medSpacer"></div>
+  <p>Or click below to delete the person:</p>
+  <div class="medSpacer"></div>
+  <a id="deletePerson" href="javascript:return false;" class="linkButton deleteButton">Delete Person</a>
+  <div class="largeSpacer"></div>
+</div>
+
+<div id="assignPersonDialog" class="dialogContainer" title="Assign Members">
+  <p>Click to assign or unassign members</p>
+  <div id="memberContainer"></div>
+</div>
+
+<div id="unshareDialog" class="dialogContainer" title="Unshare">
+  <p>Stop sharing?</p>
+  <div class="mediumSpacer"></div>
+  <div id="imgHolder"></div>
+  <div class="largeSpacer"></div>
+  <a id="unshareButton" href="javascript:return false;" class="linkButton deleteButton">Stop</a>
+  <div class="largeSpacer"></div>
+</div>

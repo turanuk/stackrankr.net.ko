@@ -1,0 +1,21 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  var personId = Request["PersonId"].AsInt();
+  var db = Database.Open("stackRankR");
+  //Pull the team
+  var person = db.QuerySingle("SELECT * FROM Person WHERE Id = @0", personId);
+  var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", person.RankingId);
+  var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
+
+  //Check for ownership or shared rights
+  if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
+    var userIdList = new List<int>();
+    foreach (var p in db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", personId)) {
+      userIdList.Add(p.UserId);
+    }
+    Response.Write(Json.Encode(userIdList));
+  } else {
+    Response.SetStatus(401);
+  }
+}

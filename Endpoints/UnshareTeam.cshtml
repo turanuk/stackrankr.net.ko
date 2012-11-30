@@ -1,0 +1,22 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  if (!IsPost) {
+    Response.SetStatus(401);
+  } else {
+    var teamId = Request["TeamId"].AsInt();
+    var username = Request["Username"];
+    var db = Database.Open("stackRankR");
+    //Pull the team
+    var team = db.QuerySingle("SELECT OwnerId FROM Team WHERE Id = @0", teamId);
+    var userId = db.QuerySingle("SELECT UserId FROM UserProfile WHERE Email = @0", username);
+
+    //Only owners can unshare teams
+    if (team.OwnerId == WebSecurity.CurrentUserId) {
+      db.Execute("DELETE FROM TeamAccess WHERE UserId=@0 AND TeamId=@1", userId.UserId, teamId);
+      Response.SetStatus(200);
+    } else {
+      Response.SetStatus(401);
+    }
+  }
+}

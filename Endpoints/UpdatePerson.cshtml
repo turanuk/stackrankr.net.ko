@@ -1,0 +1,23 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  if (!IsPost) {
+    Response.SetStatus(401);
+  } else {
+    var personId = Request["PersonId"].AsInt();
+    var rankingId = Request["RankingId"].AsInt();
+    var personDescription = Request.Unvalidated("PersonDescription");
+    var db = Database.Open("stackRankR");
+    //Pull the ranking
+    var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", rankingId);
+    var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
+
+    //Check for ownership or shared rights
+    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
+      db.Execute("UPDATE Person SET Description=@0  WHERE Id=@1", personDescription, personId);
+      Response.SetStatus(200);
+    } else {
+      Response.SetStatus(401);
+    }
+  }
+}
