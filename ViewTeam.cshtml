@@ -20,6 +20,8 @@
   var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
   var sharedUsers = db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId);
 }
+<script src="~/Scripts/TeamViewModel.js"></script>
+<script src="~/Scripts/CustomBindings.js"></script>
 <div class="topNav">
   <a href="~/Teams">Back to Teams</a>
 </div>
@@ -45,23 +47,6 @@
 @section Scripts {
   <script>
     $(function () {
-      var makeSortable = function () {
-        $('.peopleContainer').sortable({
-          connectWith: '.peopleContainer',
-          placeholder: 'ui-state-highlight',
-          helper: 'clone',
-          scroll: true,
-          forcePlaceholderSize: true,
-          stop: function (event, ui) {
-            var ranking = $(ui.item).parents('.ranking');
-            var personId = ui.item.attr('id');
-            var rankingId = ranking.attr('data-rankingId');
-            var sortableArray = $(ui.item).parent().sortable('toArray');
-            var index = sortableArray.indexOf(personId);
-            $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
-          }
-        });
-      }
       $('#newRankingButton').click(function () {
         var executeRankingInsertion = function (dialogRef) {
           var rankingText = $('#rankingName').val();
@@ -70,7 +55,7 @@
           } else {
             $.post('/endpoints/addranking', { TeamId: $('#teamId').val(), RankingText: rankingText }, function (data) {
               $('.rankingContainer').append('<div class="ranking" data-rankingId="' + data + '"><a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="' + data + '">' + rankingText + '</h3></a><ul class="peopleContainer"></ul><a href="javascript: return false;" data-rankingId="' + data + '" class="addPerson">Add a person</a>');
-              makeSortable();
+              //makeSortable();
             });
             dialogRef.dialog('close');
           }
@@ -370,8 +355,7 @@
           }
         });
       });
-
-      makeSortable();
+      ko.applyBindings(new TeamViewModel());
     });
   </script>
 }
@@ -383,8 +367,9 @@
     <div class="rankingContainer">
       @foreach (var ranking in rankings) {
         <div class="ranking" data-rankingId="@ranking.Id">
+          <div data-bind="click: $root"></div>
           <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
-          <ul class="peopleContainer">
+          <ul class="peopleContainer" data-bind="makeSortable: $root">
             @{
               var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
               foreach (var person in people) {
