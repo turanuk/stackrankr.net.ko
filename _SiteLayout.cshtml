@@ -1,63 +1,80 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>@Page.Title - stackRankR.NET</title>
-    <link href="~/Content/themes/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Custom.css" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="~/Content/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="~/Content/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/Content/themes/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Custom.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/jquery-1.8.3.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.9.2.min.js"></script>
     <script src="~/Scripts/knockout-2.2.0.js"></script>
-    <meta name="viewport" content="width=device-width" />
   </head>
+
   <body>
-    <div class="topHeader"></div>
-    <header>
-      <div class="content-wrapper">
-        <div class="float-left">
-          <p class="site-title"><a href="~/">stackRankR.NET</a></p>
-        </div>
-        <div class="float-right">
-          <section id="login">
-            @if (WebSecurity.IsAuthenticated) {
-              <text>
-                Hello, <a class="email" href="~/Account/Manage" title="Manage">@WebSecurity.CurrentUserName</a>!
-                <form id="logoutForm" action="~/Account/Logout" method="post">
-                  @AntiForgery.GetHtml()
-                  <a href="javascript:document.getElementById('logoutForm').submit()">Log out</a>
-                </form>
-              </text>
-            } else {
-              <ul>
-                <li><a href="~/Account/Register">Register</a></li>
-                <li><a href="~/Account/Login">Log in</a></li>
-              </ul>
-            }
-          </section>
-          <nav>
-            <ul id="menu">
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="~/">stackRankR.NET</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="~/">Home</a></li>
               <li><a href="~/Teams">Teams</a></li>
             </ul>
-          </nav>
+            <div class="pull-right topRightBar">
+              @if (WebSecurity.IsAuthenticated) {
+                <text>
+                  <form id="logoutForm" action="~/Account/Logout" method="post">
+                    @AntiForgery.GetHtml()
+                    Hello, <a class="email" href="~/Account/Manage" title="Manage">@WebSecurity.CurrentUserName</a>!
+                    <a href="javascript:document.getElementById('logoutForm').submit()">Log out</a>
+                  </form>
+                </text>
+              } else {
+                <a href="~/Account/Register">Register</a>
+                <a href="~/Account/Login">Log in</a>
+              }
+            </div>
+          </div><!--/.nav-collapse -->
         </div>
       </div>
-    </header>
-    <div id="body">
-      @RenderSection("featured", required: false)
-      <section class="content-wrapper main-content clear-fix">
-        @RenderBody()
-      </section>
     </div>
+
+    <div class="container">
+      @RenderBody()
+
+      <hr>
       <footer>
-        <div class="content-wrapper">
-          <div class="float-left">
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Web Page</p>
-          </div>
-        </div>
+        <p>&copy; Company 2012</p>
       </footer>
-  @RenderSection("Scripts", required: false)
+
+    </div> <!-- /container -->
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
   </body>
 </html>

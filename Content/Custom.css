@@ -1,6 +1,8 @@
-a {
-  text-decoration: none;
+/*#region Layout*/
+.topRightBar {
+  padding-top: 9px;
 }
+/*#endregion*/
 
 .newTeam {
   display: block;
