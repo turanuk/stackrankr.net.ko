@@ -1,0 +1,24 @@
+﻿@{
+  //This is the primary endpoint for getting an entire team.
+
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  var teamId = Request["TeamId"].AsInt();
+  var db = Database.Open("stackRankR");
+  foreach(var ranking in db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId)) {
+    var person = db.QuerySingle("SELECT * FROM Person WHERE Id = @0", null);
+  }
+  
+  
+
+  //Check for ownership or shared rights
+  if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
+    var userIdList = new List<int>();
+    foreach (var p in db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", personId)) {
+      userIdList.Add(p.UserId);
+    }
+    Response.Write(Json.Encode(userIdList));
+  } else {
+    Response.SetStatus(401);
+  }
+}

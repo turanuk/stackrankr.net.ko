@@ -165,7 +165,7 @@
             $('#deleteRanking').click(function () {
               if ($(this).html() === 'Sure?') {
                 $.post('/endpoints/deleteRanking', { RankingId: rankingId }, function () {
-                  rankingDom.fadeOut(100, function () {
+                  rankingDom.fadeOut(200, function () {
                     $(this).remove();
                   });
                   thisDialog.dialog('close');
@@ -337,7 +337,7 @@
             $('#deletePerson').click(function () {
               if ($(this).html() === 'Sure?') {
                 $.post('/endpoints/deleteperson', { PersonId: personId }, function () {
-                  personDom.fadeOut(100, function () {
+                  personDom.fadeOut(200, function () {
                     $(this).remove();
                   });
                   thisDialog.dialog('close');
@@ -367,7 +367,6 @@
     <div class="rankingContainer">
       @foreach (var ranking in rankings) {
         <div class="ranking" data-rankingId="@ranking.Id">
-          <div data-bind="click: $root"></div>
           <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
           <ul class="peopleContainer" data-bind="makeSortable: $root">
             @{
@@ -376,7 +375,7 @@
               <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
                 <a href="javascript: return false" class="modifyPerson">
                   <span class="personDescription">@person.Description</span>
-                  @{ 
+                  @{
                     var assignedPersonQuery = db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", person.Id);
                     if (assignedPersonQuery.Count > 0) {
                       <div class="assignedPersonParent">
