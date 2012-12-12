@@ -3,35 +3,26 @@
   Page.Title = "Home Page";
 }
 
-<section class="featured">
-  <div class="content-wrapper">
-    <hgroup class="title">
-        <h1>Fit the curve</h1>
-        <h2>- built on ASP.NET Web Pages using WebMatrix 2</h2>
-    </hgroup>
-    <ul>
-      <li>rank your teams</li>
-      <li>comment on rankings</li>
-      <li>easily move others around</li>
-    </ul>
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="hero-unit">
+  <h1>Fit the curve</h1>
+  <p>stackRankR built on ASP.NET Web Pages using WebMatrix 2</p>
+</div>
+
+<!-- Example row of columns -->
+<div class="row">
+  <div class="span4">
+    <h2>Sign up</h2>
+    <p>To get started, you need to create an account!</p>
+    <p><a href="~/Account/Register" class="btn">Register</a></p>
   </div>
-</section>
-
-<h3>Get started:</h3>
-
-<ol class="round">
-  <li class="one">
-    <h5>Create an account</h5>
-    To get started, you need to create an account! <a href="~/Account/Register">Register</a> here.
-  </li>
-
-  <li class="two">
-    <h5>Create a team</h5>
-    You gotta create it before you rank it. View your teams <a href="~/teams">here</a>.
-  </li>
-
-  <li class="three">
-    <h5>Rank'em</h5>
-    It's what the tool is for.
-  </li>
-</ol>
+  <div class="span4">
+    <h2>Create a team</h2>
+    <p>You gotta create it first.</p>
+    <p><a class="btn btn-info" href="~/teams">View Teams</a></p>
+  </div>
+  <div class="span4">
+    <h2>Rank'em</h2>
+    <p>It's what the tool is for.</p>
+  </div>
+</div>

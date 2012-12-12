@@ -1,4 +1,7 @@
 /*#region Layout*/
+body {
+  font-family: 'Open Sans';
+}
 .topRightBar {
   padding-top: 9px;
 }
@@ -9,8 +12,20 @@
   margin-left: 10px;
 }
 
+
+.topNav a {
+  color: black;
+}
+
+  .topNav a:hover {
+    font-weight: bold;
+    text-decoration: none;
+  }
+
 .linkButton {
+  display: inline-block;
   background-color: #d8eb9f;
+  color: black;
   border: 3px solid black;
   font-family: 'Open Sans';
   font-size: 1.0em;
@@ -25,10 +40,12 @@
 }
 
 .actionHeader {
-  height: 25px;
+  display: block;
+  margin-bottom: 7px;
 }
 
 #newRankingButton {
+  display: inline-block;
   margin-left: 20px;
 }
 
@@ -84,7 +101,7 @@
 
   .teamList li {
     margin: 0;
-    padding: 3px 0 3px 0;
+    padding: 3px 0 5px 0;
   }
 
     .teamList li a {
@@ -100,6 +117,10 @@
       text-decoration: none;
     }
 
+.miniSpacer {
+  height: 3px;
+}
+
 .medSpacer {
   height: 7px;
 }
@@ -108,8 +129,17 @@
   height: 20px;
 }
 
+.team:hover {
+  background: #d8eb9f;
+}
+
+.team {
+  width: 350px;
+}
+
 .teamName {
   text-align: left;
+  color: black;
 }
 
 .teamList li a:hover .modifyButton {
@@ -196,12 +226,19 @@
   width: 250px;
 }
 
+.ranking a:hover {
+  text-decoration: none;
+}
+
   .ranking h3 {
-    margin: 13px 0 0 13px;
+    color: black;
+    font-size: 1.3em;
+    margin: 7px 0 3px 13px;
     padding: 0;
   }
 
 .addPerson {
+  color: black;
   border: 2px solid #a9bc6f;
   border-top: 2px solid #deeabd;
   display: block;
