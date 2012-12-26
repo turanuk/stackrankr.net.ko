@@ -2,16 +2,33 @@
 body {
   font-family: 'Open Sans';
 }
-.topRightBar {
+
+.topRightLinks {
   padding-top: 9px;
+  color: white;
 }
+
+.topRightLinks form {
+  margin-bottom: 0px;
+}
+
+.topRightLinks a {
+  color: #999;
+  display: inline-block;
+  margin-left: 7px;
+}
+
+.topRightLinks a:hover {
+  text-decoration: none;
+  color: white;
+}
+
 /*#endregion*/
 
 .newTeam {
   display: block;
   margin-left: 10px;
 }
-
 
 .topNav a {
   color: black;

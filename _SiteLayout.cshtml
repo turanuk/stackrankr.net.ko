@@ -45,20 +45,20 @@
               <li class="active"><a href="~/">Home</a></li>
               <li><a href="~/Teams">Teams</a></li>
             </ul>
-            <div class="pull-right topRightBar">
-              @if (WebSecurity.IsAuthenticated) {
-                <text>
-                  <form id="logoutForm" action="~/Account/Logout" method="post">
-                    @AntiForgery.GetHtml()
-                    Hello, <a class="email" href="~/Account/Manage" title="Manage">@WebSecurity.CurrentUserName</a>!
-                    <a href="javascript:document.getElementById('logoutForm').submit()">Log out</a>
-                  </form>
-                </text>
-              } else {
+            @if (WebSecurity.IsAuthenticated) {
+              <text>
+                <form id="logoutForm" class="navbar-form pull-right topRightLinks" action="~/Account/Logout" method="post">
+                  @AntiForgery.GetHtml()
+                  Hello,<a class="email" href="~/Account/Manage" title="Manage">@WebSecurity.CurrentUserName</a>!
+                  <a href="javascript:document.getElementById('logoutForm').submit()">Log out</a>
+                </form>
+              </text>
+            } else {
+              <div class="topRightLinks navbar-form pull-right">
                 <a href="~/Account/Register">Register</a>
                 <a href="~/Account/Login">Log in</a>
-              }
-            </div>
+              </div>
+            }
           </div><!--/.nav-collapse -->
         </div>
       </div>
