@@ -340,3 +340,8 @@ ul {
   margin-left: 3px;
   margin-bottom: 3px;
 }
+
+.field-validation-error {
+  color: red;
+  margin-left: 5px;
+}

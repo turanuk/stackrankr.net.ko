@@ -70,15 +70,16 @@
                                 {<text>class="error-label"</text>}>Email address</label>
             <div class="input-prepend">
               <span class="add-on"><i class="icon-envelope"></i></span>
-              <input type="text" class="span5" id="email" name="email" value="@email" @Validation.For("email")/>
+              <input type="text" class="span3" id="email" name="email" value="@email" @Validation.For("email")/>
               @Html.ValidationMessage("email")
             </div>
-            <label for="password" @if (!ModelState.IsValidField("password")) {<text>class="error-label"</text>}>Password</label>
+            <label for="password" @if(!ModelState.IsValidField("password")) {<text>class="error-label"</text>}>Password</label>
             <div class="input-prepend">
-              <input type="password" id="password" name="password" @Validation.For("password")/>
-              @* Write any password validation errors to the page *@
+              <span class="add-on"><i class="icon-lock"></i></span>
+              <input type="password" class="span3" id="password" name="password" @Validation.For("password")/>
               @Html.ValidationMessage("password")
             </div>
+            <div class="medSpacer"></div>
             <label class="checkbox" for="rememberMe">
               Remember me?
               <input type="checkbox" id="rememberMe" name="rememberMe" value="true" checked="@rememberMe" />
@@ -88,8 +89,10 @@
             </div>
         </fieldset>
     </form>
-    <p>
-        <a href="~/Account/Register">Don't have a Account?</a>
-        <a href="~/Account/ForgotPassword">Did you forget your password?</a>
-    </p>
+  <p>
+    <a href="~/Account/Register">Don't have a Account?</a>
+  </p>
+  <p>
+    <a href="~/Account/ForgotPassword">Did you forget your password?</a>
+  </p>
 </section>
