@@ -355,3 +355,7 @@ ul {
   color: #a9bc6f;
   font-weight: bold;
 }
+
+.error-label {
+  color: red;
+}
