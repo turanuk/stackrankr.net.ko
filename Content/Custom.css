@@ -343,5 +343,15 @@ ul {
 
 .field-validation-error {
   color: red;
+  display: inline-block;
   margin-left: 5px;
+}
+
+.validation-summary-errors li {
+  color: red;
+}
+
+.message-success {
+  color: #a9bc6f;
+  font-weight: bold;
 }

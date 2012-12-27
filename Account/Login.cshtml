@@ -22,11 +22,6 @@
     // Setup validation
     Validation.RequireField("email", "You must specify an email address.");
     Validation.RequireField("password", "You must specify a password.");
-    Validation.Add("password",
-        Validator.StringLength(
-            maxLength: Int32.MaxValue,
-            minLength: 6,
-            errorMessage: "Password must be at least 6 characters"));
 
     // If this is a POST request, validate and process data
     if (IsPost) {
@@ -59,34 +54,42 @@
 
 <section id="loginForm">
     <h2>Login</h2>
-    <form method="post">
+    <form method="post" class="form-horizontal">
         @AntiForgery.GetHtml()
         @* If one or more validation errors exist, show an error *@
         @Html.ValidationSummary("Log in was unsuccessful. Please correct the errors and try again.", excludeFieldErrors: true, htmlAttributes: null)
 
         <fieldset>
-            <legend>Log in to Your Account</legend>
-            <label for="email" @if (!ModelState.IsValidField("email"))
-                                {<text>class="error-label"</text>}>Email address</label>
-            <div class="input-prepend">
-              <span class="add-on"><i class="icon-envelope"></i></span>
-              <input type="text" class="span3" id="email" name="email" value="@email" @Validation.For("email")/>
+          <legend>Log in to Your Account</legend>
+          <div class="control-group">
+            <label class="control-label" for="email" @if (!ModelState.IsValidField("email")){<text>class="error-label"</text>}>Email address</label>
+            <div class="controls">
+              <div class="input-prepend">
+                <span class="add-on"><i class="icon-envelope"></i></span>
+                <input type="text" class="span3" id="email" name="email" value="@email" @Validation.For("email")/>
+              </div>
               @Html.ValidationMessage("email")
             </div>
-            <label for="password" @if(!ModelState.IsValidField("password")) {<text>class="error-label"</text>}>Password</label>
-            <div class="input-prepend">
-              <span class="add-on"><i class="icon-lock"></i></span>
-              <input type="password" class="span3" id="password" name="password" @Validation.For("password")/>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="password" @if(!ModelState.IsValidField("password")) {<text>class="error-label"</text>}>Password</label>
+            <div class="controls">
+              <div class="input-prepend">
+                <span class="add-on"><i class="icon-lock"></i></span>
+                <input type="password" class="span3" id="password" name="password" @Validation.For("password")/>
+              </div>
               @Html.ValidationMessage("password")
             </div>
-            <div class="medSpacer"></div>
-            <label class="checkbox" for="rememberMe">
-              Remember me?
+          </div>
+          <div class="control-group">
+            <label class="control-label" class="checkbox" for="rememberMe">Remember me?</label>
+            <div class="controls">
               <input type="checkbox" id="rememberMe" name="rememberMe" value="true" checked="@rememberMe" />
-            </label>
-            <div class="form-actions">
-              <input type="submit" value="Log in" class="btn btn-success"/>
             </div>
+          </div>
+          <div class="form-actions">
+            <input type="submit" value="Log in" class="btn btn-success"/>
+          </div>
         </fieldset>
     </form>
   <p>

@@ -105,9 +105,8 @@
         }
     }
 }
-<hgroup class="title">
-    <h1>@Page.Title.</h1>
-</hgroup>
+
+<h2>@Page.Title.</h2>
 
 @if (!successMessage.IsEmpty()) {
     <p class="message-success">
@@ -117,15 +116,13 @@
 
 <p>You're logged in as <strong>@WebSecurity.CurrentUserName</strong>.</p>
 
-@if (hasLocalAccount) {
-    <h3>Change password</h3>
-} else {
-    <p>
-        You do not have a local password for this site. Add a local password so you can log in without an external login.
-    </p>
+@if (!hasLocalAccount) {
+  <p>
+    You do not have a local password for this site. Add a local password so you can log in without an external login.
+  </p>
 }
 
-<form method="post">
+<form method="post" class="form-horizontal">
     @AntiForgery.GetHtml()
     @Html.ValidationSummary(excludeFieldErrors: true)
 
@@ -135,27 +132,40 @@
         } else {
             <legend>Set Password Form</legend>
         }
-        <ol>
-            @if (hasLocalAccount) {
-                <li class="current-password">
-                    <label for="currentPassword" @if (!ModelState.IsValidField("currentPassword")) {<text>class="error-label"</text>}>Current password</label>
-                    <input type="password" id="currentPassword" name="currentPassword" @Validation.For("currentPassword")/>
-                    @Html.ValidationMessage("currentPassword")
-                </li>
-            }
-            <li class="new-password">
-                <label for="newPassword" @if (!ModelState.IsValidField("newPassword")) {<text>class="error-label"</text>}>New password</label>
-                <input type="password" id="newPassword" name="newPassword" @Validation.For("newPassword")/>
-                @Html.ValidationMessage("newPassword")
-            </li>
-            <li class="confirm-password">
-                <label for="confirmPassword" @if (!ModelState.IsValidField("confirmPassword")) {<text>class="error-label"</text>}>Confirm new password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" @Validation.For("confirmPassword")/>
-                @Html.ValidationMessage("confirmPassword")
-            </li>
-        </ol>
+        <div class="control-group">
+          <label class="control-label" for="email" @if(!ModelState.IsValidField("currentPassword")){<text>class="error-label"</text>}>Current password</label>
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-envelope"></i></span>
+              <input type="password" class="span3" id="currentPassword" name="currentPassword" @Validation.For("currentPassword")/>
+            </div>
+            @Html.ValidationMessage("currentPassword")
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="email" @if(!ModelState.IsValidField("newPassword")){<text>class="error-label"</text>}>New password</label>
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-envelope"></i></span>
+              <input type="password" class="span3" id="newPassword" name="newPassword" @Validation.For("newPassword")/>
+            </div>
+            @Html.ValidationMessage("newPassword")
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="email" @if(!ModelState.IsValidField("confirmPassword")){<text>class="error-label"</text>}>Confirm new password</label>
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-envelope"></i></span>
+              <input type="password" class="span3" id="confirmPassword" name="confirmPassword" @Validation.For("confirmPassword")/>
+            </div>
+            @Html.ValidationMessage("confirmPassword")
+          </div>
+        </div>
         @if (hasLocalAccount) {
-            <button type="submit" name="action" value="password">Change Password</button>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success" name="action" value="password">Change Password</button>
+            </div>
             <p>
                 Click <a href="~/Account/ForgotPassword" title="Forgot password page">here</a> if you've forgotten your password.
             </p>
@@ -193,6 +203,6 @@
         </table>
     }
 
-    <h3>Add an external login</h3>
-    @RenderPage("~/Account/_ExternalLoginsList.cshtml")
+    @*<h3>Add an external login</h3>
+    @RenderPage("~/Account/_ExternalLoginsList.cshtml")*@
 </section>
