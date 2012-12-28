@@ -42,8 +42,8 @@
           <a class="brand" href="~/">stackRankR.NET</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="~/">Home</a></li>
-              <li><a href="~/TeamList">Teams</a></li>
+              <li @if (Page.PageId == "Home") {<text>class="active"</text>}><a href="~/">Home</a></li>
+              <li @if (Page.PageId == "Team") {<text>class="active"</text>}><a href="~/TeamList">Teams</a></li>
             </ul>
             @if (WebSecurity.IsAuthenticated) {
               <text>

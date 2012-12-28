@@ -2,6 +2,7 @@
   WebSecurity.RequireAuthenticatedUser();
   Layout = "~/_SiteLayout.cshtml";
   Page.Title = "Your Teams";
+  Page.PageId = "Team";
 
   var db = Database.Open("stackRankR");
   if (IsPost) {

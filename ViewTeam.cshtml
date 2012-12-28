@@ -3,6 +3,8 @@
 @{
   WebSecurity.RequireAuthenticatedUser();
   Layout = "~/_SiteLayout.cshtml";
+  Page.PageId = "Team";
+
   var teamId = UrlData[0].AsInt();
   if (teamId == 0) {
     Response.Redirect("~/Error");
@@ -17,6 +19,7 @@
     }
   }
 
+  Page.Title = team.Name;
   var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
   var sharedUsers = db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId);
 }
