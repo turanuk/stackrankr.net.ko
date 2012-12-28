@@ -21,6 +21,7 @@
   var teamQuery = db.Query("SELECT Name, Id, Display FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId);
   var sharedTeamQuery = db.Query("SELECT TeamId FROM TeamAccess WHERE UserId = @0", WebSecurity.CurrentUserId);
 }
+<script src="~/Scripts/TeamListViewModel.js"></script>
 
 @section Scripts {
   <script>
@@ -167,6 +168,29 @@
   </script>
 }
 
+<div class="testContainer">
+  <ul data-bind="foreach: teams">
+    <li><span data-bind="text: Id"></span><span data-bind="text: Name"></span><a href="#myModal" data-bind="click: $root.sharePrep" role="button" class="btn" data-toggle="modal">Share</a></li>
+  </ul>
+</div>
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Share</h3>
+  </div>
+  <div class="modal-body">
+    <p>Enter a username to share this team with:</p>
+    <input id="usernameInput" type="text" class="dialogInput"/><span class="error">*</span>
+    <div id="errMsg"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.share">Save changes</button>
+  </div>
+</div>
+
+
 <div class="contentContainer">
   <img alt="avatar" src="@Gravatar.GetUrl(WebSecurity.CurrentUserName, 120)" class="avatar">
   @if (teamQuery.Count() == 0 && sharedTeamQuery.Count() == 0) {
@@ -200,7 +224,7 @@
   }
 
   <form method="post" id="newTeam">
-    <a href="javascript:return false;" class="linkButton" id="newTeamButton">New Team</a>
+    <a href="#" class="btn btn-primary" id="newTeamButton">New Team</a>
     <div id="dialog" title="New Team">
       <p>Enter a name for your new team:</p>
       <input type="text" id="newTeamName" name="newTeamName" class="dialogInput"/>

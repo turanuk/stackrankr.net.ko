@@ -1,0 +1,10 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  var db = Database.Open("stackRankR");
+  var teamList = new List<CompactTeam>();
+  foreach (var team in db.Query("SELECT * FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId)) {
+    teamList.Add(new CompactTeam() { Id = team.Id, Name = team.Name });
+  }
+  Response.Write(Json.Encode(teamList));
+}

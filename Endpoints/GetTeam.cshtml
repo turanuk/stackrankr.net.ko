@@ -1,6 +1,5 @@
 ﻿@{
   //This is the primary endpoint for getting an entire team.
-
   WebSecurity.RequireAuthenticatedUser();
   Response.AddHeader("Cache-Control", "no-cache");
   var teamId = Request["TeamId"].AsInt();
