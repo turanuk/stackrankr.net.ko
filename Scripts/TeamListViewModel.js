@@ -5,7 +5,7 @@ var TeamListViewModel = function () {
   //This passes a data- payload to the modal dialog's "Save" button that contains the teamId, and clears out the input.
   self.sharePrep = function (team) {
     $('#shareButton').attr('data-teamId', team.Id);
-    ('#usernameInput').val('')
+    $('#usernameInput').val('')
   }
 
   self.share = function (viewModel, event) {
