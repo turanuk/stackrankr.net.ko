@@ -21,6 +21,7 @@
   var teamQuery = db.Query("SELECT Name, Id, Display FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId);
   var sharedTeamQuery = db.Query("SELECT TeamId FROM TeamAccess WHERE UserId = @0", WebSecurity.CurrentUserId);
 }
+
 <script src="~/Scripts/TeamListViewModel.js"></script>
 
 @section Scripts {
@@ -170,26 +171,45 @@
 
 <div class="testContainer">
   <ul data-bind="foreach: teams">
-    <li><span data-bind="text: Id"></span><span data-bind="text: Name"></span><a href="#myModal" data-bind="click: $root.sharePrep" role="button" class="btn" data-toggle="modal">Share</a></li>
+    <li>
+      <span data-bind="text: Id"></span>
+      <span data-bind="text: Name"></span>
+      <a href="#shareModal" data-bind="click: $root.sharePrep" role="button" class="btn" data-toggle="modal">Share</a>
+    </li>
   </ul>
 </div>
 
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<a href="#newTeamModal" data-bind="click: $root.newTeamPrep" role="button" class="btn" data-toggle="modal">New Team</a>
+
+<div id="shareModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Share</h3>
+    <h3>Share</h3>
   </div>
   <div class="modal-body">
-    <p>Enter a username to share this team with:</p>
-    <input id="usernameInput" type="text" class="dialogInput"/><span class="error">*</span>
-    <div id="errMsg"></div>
+    <label for="usernameInput">Enter a username to share this team with:</label>
+    <input id="usernameInput" type="text" class="dialogInput"/>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.share">Save changes</button>
+    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.share">Share</button>
   </div>
 </div>
 
+<div id="newTeamModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>New Team</h3>
+  </div>
+  <div class="modal-body">
+    <label for="newTeamInput">Enter a name for your new team:</label>
+    <input id="newTeamInput" type="text" class="dialogInput"/>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.newTeam">Create</button>
+  </div>
+</div>
 
 <div class="contentContainer">
   <img alt="avatar" src="@Gravatar.GetUrl(WebSecurity.CurrentUserName, 120)" class="avatar">
