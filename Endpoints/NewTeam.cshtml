@@ -1,0 +1,28 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  if (!IsPost) {
+    Response.SetStatus(401);
+  } else {
+    try {
+      var teamName = Request["TeamName"];
+      if (teamName.IsEmpty()) {
+        throw new ArgumentException();
+      }
+      var db = Database.Open("stackRankR");
+      //Insert the team
+      db.Execute("INSERT INTO Team (Name, OwnerId, Display) VALUES (@0, @1, @2)", teamName, WebSecurity.CurrentUserId, true);
+      var teamId = db.GetLastInsertId();
+      //Share with yourself
+      db.Execute("INSERT INTO TeamAccess (UserId, TeamId) VALUES (@0, @1)", WebSecurity.CurrentUserId, teamId);
+      //Create the initial Rankings
+      var numOfRankings = 3;
+      for (int i = 1; i <= numOfRankings; i++) {
+        db.Execute("INSERT INTO Ranking (Name, TeamId) VALUES (@0, @1)", i, teamId);
+      }
+      Response.Write(teamId);
+    } catch (Exception) {
+      Response.SetStatus(500);
+    }
+  }
+}

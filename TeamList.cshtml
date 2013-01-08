@@ -175,6 +175,8 @@
       <span data-bind="text: Id"></span>
       <span data-bind="text: Name"></span>
       <a href="#shareModal" data-bind="click: $root.sharePrep" role="button" class="btn" data-toggle="modal">Share</a>
+      <a href="#renameModal" data-bind="click: $root.renamePrep" role="button" class="btn" data-toggle="modal">Rename</a>
+      <a href="#deleteModal" data-bind="click: $root.deletePrep" role="button" class="btn" data-toggle="modal">Delete</a>
     </li>
   </ul>
 </div>
@@ -189,10 +191,40 @@
   <div class="modal-body">
     <label for="usernameInput">Enter a username to share this team with:</label>
     <input id="usernameInput" type="text" class="dialogInput"/>
+    <p id="shareMsg"></p>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
     <button class="btn btn-primary" id="shareButton" data-bind="click: $root.share">Share</button>
+  </div>
+</div>
+
+<div id="renameModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Rename</h3>
+  </div>
+  <div class="modal-body">
+    <label for="renameInput">Enter a new name for the team:</label>
+    <input id="renameInput" type="text" class="dialogInput"/>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.rename">Update</button>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Delete</h3>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete <span id="deleteTeamName"></span>?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+    <button class="btn btn-primary" id="shareButton" data-bind="click: $root.delete">Yes</button>
   </div>
 </div>
 
@@ -204,6 +236,7 @@
   <div class="modal-body">
     <label for="newTeamInput">Enter a name for your new team:</label>
     <input id="newTeamInput" type="text" class="dialogInput"/>
+    <p id="newTeamError" class="errorMsg"></p>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
