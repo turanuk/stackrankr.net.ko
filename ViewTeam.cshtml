@@ -35,7 +35,7 @@
     @if (sharedUsers.Count() > 0) {
       <text>SHARED WITH</text>
     }
-    <span class="avatars">
+    <span class="avatarList">
       @foreach (var u in sharedUsers) {
         var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
         <img src="@Gravatar.GetUrl(user.Email, 25)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
@@ -43,7 +43,7 @@
     </span>
   </div>
 </div>
-<div class="actionHeader">
+<div>
   <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
 </div>
 
@@ -409,7 +409,7 @@
   <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
   <p>Or click below to delete the ranking:</p>
   <div class="medSpacer"></div>
-  <a id="deleteRanking" href="javascript:return false;" class="linkButton deleteButton">Delete Ranking</a>
+  <a id="deleteRanking" href="javascript:return false;" class="linkButton">Delete Ranking</a>
   <div class="largeSpacer"></div>
 </div>
 
@@ -432,7 +432,7 @@
   <div class="largeSpacer"></div>
   <p>Or click below to delete the person:</p>
   <div class="miniSpacer"></div>
-  <a id="deletePerson" href="javascript:return false;" class="linkButton deleteButton">Delete Person</a>
+  <a id="deletePerson" href="javascript:return false;" class="linkButton">Delete Person</a>
   <div class="largeSpacer"></div>
 </div>
 
@@ -446,6 +446,6 @@
   <div class="mediumSpacer"></div>
   <div id="imgHolder"></div>
   <div class="largeSpacer"></div>
-  <a id="unshareButton" href="javascript:return false;" class="linkButton deleteButton">Stop</a>
+  <a id="unshareButton" href="javascript:return false;" class="linkButton">Stop</a>
   <div class="largeSpacer"></div>
 </div>

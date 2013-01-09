@@ -1,6 +1,28 @@
+@lightgreen: #D8EB9F;
+@errorColor: #F65151;
+@mainFont: 'Open Sans';
+
 /*#region Layout*/
 body {
-  font-family: 'Open Sans';
+  font-family: @mainFont;
+}
+
+ul {
+  list-style: none;
+  margin-left: 12px;
+  padding: 0;
+}
+
+.miniSpacer {
+  height: 3px;
+}
+
+.medSpacer {
+  height: 7px;
+}
+
+.largeSpacer {
+  height: 20px;
 }
 
 .topRightLinks {
@@ -8,112 +30,76 @@ body {
   color: white;
 }
 
-.topRightLinks form {
-  margin-bottom: 0px;
-}
-
-.topRightLinks a {
-  color: #999;
-  display: inline-block;
-  margin-left: 7px;
-}
-
-.topRightLinks a:hover {
-  text-decoration: none;
-  color: white;
-}
-/*#endregion*/
-
-.newTeam {
-  display: block;
-  margin-left: 10px;
-}
-
-.topNav a {
-  color: black;
-}
-
-  .topNav a:hover {
-    font-weight: bold;
-    text-decoration: none;
+  .topRightLinks a {
+    color: #999;
+    display: inline-block;
+    margin-left: 7px;
   }
 
-.linkButton {
-  display: inline-block;
-  background-color: #d8eb9f;
-  color: black;
-  border: 3px solid black;
-  font-family: 'Open Sans';
-  font-size: 1.0em;
-  font-weight: bold;
-  padding: 5px;
-  text-decoration: none;
-  text-transform: uppercase;
-}
+  .topRightLinks a:hover {
+    text-decoration: none;
+    color: white;
+  }
+/*#endregion*/
 
-.deleteButton {
-  font-size: 0.95em;
-}
-
-.actionHeader {
-  display: block;
-  margin-bottom: 7px;
-}
-
-#newRankingButton {
-  display: inline-block;
-  margin-left: 20px;
-}
-
-.linkButton:hover, .linkButton:focus {
-  background-color: #deeabd;
-  outline: none;
-  text-decoration: none;
-}
-
-#dialog {
-  display: none;
-}
-
-.dialogInput {
-  width: 250px;
-  overflow: auto;
-}
-
+/*#region Errors*/
 .error {
-  color: Red;
+  color: @errorColor;
   display: none;
   margin-left: 7px;
 }
 
 .errorMsg {
-  color: red;
+  color: @errorColor;
 }
 
-.contentContainer {
-  margin-left: 7px;
+.field-validation-error {
+  color: @errorColor;
+  display: inline-block;
+  margin-left: 5px;
 }
 
-.leftContent {
-  float: left;
-  width: 50%;
+.validation-summary-errors li {
+  color: @errorColor;
 }
 
-.rightContent {
-  float: left;
+.message-success {
+  color: #a9bc6f;
+  font-weight: bold;
 }
 
+.error-label {
+  color: @errorColor;
+}
+/*#endregion*/
+
+/*#region TeamList View */
 #newTeamButton {
   font-family: Verdana, Helvetica, sans-serif;
 }
 
+.avatar {
+  margin-top: 20px;
+}
+
+.team {
+  width: 350px;
+}
+
+.team:hover {
+  background: @lightgreen;
+}
+
+.teamName {
+  text-align: left;
+  color: black;
+}
+
 .teamList {
-  font-family: 'Open Sans';
   font-size: 1.3em;
   font-weight: bold;
   list-style: none;
-  margin: 13px 0 0 0;
-  margin-bottom: 13px;
+  margin: 13px 0 13px 0;
   padding: 0;
   width: 30%;
 }
@@ -135,50 +121,25 @@ body {
       text-decoration: none;
     }
 
-.miniSpacer {
-  height: 3px;
-}
+    .teamList li a:hover .modifyButton {
+      background: url(../Images/process.png) no-repeat;
+      height: 24px;
+      opacity: 0.65;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      width: 24px;
+    }
 
-.medSpacer {
-  height: 7px;
-}
-
-.largeSpacer {
-  height: 20px;
-}
-
-.team:hover {
-  background: #d8eb9f;
-}
-
-.team {
-  width: 350px;
-}
-
-.teamName {
-  text-align: left;
-  color: black;
-}
-
-.teamList li a:hover .modifyButton {
-  background: url(../Images/process.png) no-repeat;
-  height: 24px;
-  opacity: 0.65;
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  width: 24px;
-}
-
-.teamList li a:hover .shareButton {
-  background: url(../Images/users.png) no-repeat;
-  height: 24px;
-  opacity: 0.65;
-  position: absolute;
-  right: 34px;
-  top: 5px;
-  width: 24px;
-}
+    .teamList li a:hover .shareButton {
+      background: url(../Images/users.png) no-repeat;
+      height: 24px;
+      opacity: 0.65;
+      position: absolute;
+      right: 34px;
+      top: 5px;
+      width: 24px;
+    }
 
 .deletedTeam a {
   background: #e86363;
@@ -197,11 +158,22 @@ body {
   position: absolute;
   right: 7px;
 }
+/*#endregion*/
+
 
 /* Team View */
 .topNav {
   margin-top: 13px;
 }
+
+  .topNav a {
+    color: black;
+  }
+
+  .topNav a:hover {
+   font-weight: bold;
+   text-decoration: none;
+  }
 
 .topBar {
   margin-bottom: 20px;
@@ -220,12 +192,13 @@ body {
   top: 0px;
 }
 
-.avatars {
+.avatarList {
   margin-left: 3px;
 }
 
-.avatar {
-  margin-top: 20px;
+#newRankingButton {
+  display: inline-block;
+  margin-left: 20px;
 }
 
 .rankingContainer {
@@ -266,15 +239,12 @@ body {
 }
 
   .addPerson:hover, .addPerson:focus {
-    background-color: #deeabd;
+    background-color: @lightgreen;
+    color: black;
     border: 2px solid Black;
     font-weight: bold;
     outline: none;
   }
-
-.dialogContainer {
-  display: none;
-}
 
 .peopleContainer {
   list-style-type: none;
@@ -303,7 +273,7 @@ body {
 }
 
 .ui-state-highlight {
-  background-color: #deeabd;
+  background-color: @lightgreen;
   border-radius: 4px;
   margin-bottom: 10px;
   width: 216px;
@@ -314,11 +284,7 @@ body {
   background-image: none;
 }
 
-ul {
-  list-style: none;
-  margin-left: 12px;
-  padding: 0;
-}
+
 
 .personInput {
   width: 300px;
@@ -344,21 +310,17 @@ ul {
   margin-bottom: 3px;
 }
 
-.field-validation-error {
-  color: red;
-  display: inline-block;
-  margin-left: 5px;
+/*#region To be removed*/
+#dialog {
+  display: none;
 }
 
-.validation-summary-errors li {
-  color: red;
+.dialogInput {
+  width: 250px;
+  overflow: auto;
 }
 
-.message-success {
-  color: #a9bc6f;
-  font-weight: bold;
+.dialogContainer {
+  display: none;
 }
-
-.error-label {
-  color: red;
-}
+/*#endregion*/
